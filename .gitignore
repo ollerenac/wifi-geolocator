@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.playwright-mcp/
+captures/
+.radio-profile/
+reports/
+.agents/
+.codex/
+core
+core.*
+*.dmp

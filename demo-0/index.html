@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wi-Fi field notebook · 2D positioning demo</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23173c59'/%3E%3Cpath d='M7 25V7M7 25H25M13 25V18M22 25V13' stroke='%23afdfeb' stroke-width='2'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="masthead">
+    <div class="brand"><svg viewBox="0 0 36 36" aria-hidden="true"><path d="M5 28H31M8 28V8M8 12H29M14 28V20M23 28V16"/><circle cx="23" cy="11" r="3"/></svg><div><strong>Wi-Fi field notebook</strong><span>2D positioning experiment</span></div></div>
+    <div class="header-actions"><button id="load-demo">Reset simulation</button><button id="new-field">New field session</button><button id="save-session" class="primary">Save session</button></div>
+  </header>
+  <main>
+    <div class="intro"><div><h1>From observations to an area.</h1><p>Plot stations, compare distance rings and bearings, then check the result against a known AP.</p></div><span id="source-badge" class="badge">Simulated observations</span></div>
+    <div id="message" class="message" role="status" hidden></div>
+    <div class="layout">
+      <aside class="notebook">
+        <section class="target-section">
+          <h2>Selected access point</h2>
+          <form id="target-form">
+            <label>SSID <input id="ssid" maxlength="100" autocomplete="off"></label>
+            <div class="input-row"><label>BSSID <input id="bssid" maxlength="17" required></label><label class="channel-input">Channel <input id="channel" type="number" min="1" max="233" required></label></div>
+            <button type="submit" class="subtle">Update target</button>
+          </form>
+          <p class="small">Use the same BSSID, channel, receiver and antenna settings at every station.</p>
+        </section>
+        <section class="station-section">
+          <div class="section-title"><h2>Measurement stations</h2><button id="add-station" class="icon-button" aria-label="Add measurement station">+</button></div>
+          <p class="small">Select a row to edit. Use the checkboxes to compare fewer observations.</p>
+          <div id="station-list"></div>
+        </section>
+        <section class="editor-section">
+          <h2 id="editor-title">Edit M1</h2>
+          <form id="observation-form">
+            <div class="input-row"><label>East x (m)<input id="obs-x" type="number" step="any" required></label><label>North y (m)<input id="obs-y" type="number" step="any" required></label></div>
+            <div class="input-row"><label>GPS accuracy (m)<input id="obs-gps" type="number" min="0" max="500" step="any" required></label><label>Median RSSI (dBm)<input id="obs-rssi" type="number" min="-127" max="0" step="any" required></label></div>
+            <details><summary>Enter a GPS coordinate</summary><div class="input-row"><label>Latitude<input id="obs-lat" type="number" min="-85" max="85" step="any"></label><label>Longitude<input id="obs-lon" type="number" min="-180" max="180" step="any"></label></div><button id="convert-gps" type="button" class="subtle">Convert to east / north</button><p class="small">Coordinates are relative to the plot origin below. Reported GPS accuracy is retained.</p></details>
+            <details><summary>RSSI samples and record</summary><label>Samples in dBm, separated by commas<textarea id="obs-samples" rows="2" placeholder="−71, −72, −70, −73"></textarea></label><button id="summarize-samples" type="button" class="subtle">Calculate median and spread</button><div class="input-row"><label>Sample count<input id="obs-count" type="number" min="1" max="1000000" required></label><label>Spread / MAD (dB)<input id="obs-spread" type="number" min="0" max="60" step="any" required></label></div><label>Timestamp (UTC or offset)<input id="obs-time" required placeholder="2026-09-28T12:00:00Z"></label><label>Environment / setup notes<textarea id="obs-notes" rows="2" maxlength="2000"></textarea></label><p class="small">MAD describes sample variation. It is not a distance-error bound or model calibration.</p></details>
+            <details><summary>Optional directional bearing</summary><div class="input-row"><label>True azimuth (°)<input id="obs-bearing" type="number" min="0" max="359.999" step="any"></label><label>Angular tolerance (±°)<input id="obs-angle" type="number" min="0.1" max="90" step="any"></label></div><p class="small">0° is north; 90° is east. Enter both values, or leave both empty.</p></details>
+            <div class="button-row"><button type="submit" class="primary">Save observation</button><button id="remove-station" type="button" class="subtle">Remove</button></div>
+          </form>
+        </section>
+      </aside>
+      <div class="workspace">
+        <section class="plot-section">
+          <div class="plot-toolbar"><div><h2>The test area</h2><p id="plot-description" class="small"></p></div><label class="mode-label">Estimate from<select id="mode"><option value="rssi">RSSI distance rings</option><option value="bearing">Directional bearings</option><option value="combined">RSSI + bearings</option></select></label></div>
+          <div class="plot-frame"><svg id="plot" viewBox="0 0 900 700" role="img" aria-labelledby="plot-title plot-desc"></svg></div>
+          <div class="legend"><span><i class="region-key"></i>Compatible region</span><span><i class="fit-key"></i>Best nominal fit</span><label><input id="show-truth" type="checkbox" checked>Known AP reference</label><label><input id="show-constraints" type="checkbox" checked>Show rings / wedges</label></div>
+          <div class="results"><div><span>Overlap area</span><strong id="area-result">—</strong><small id="grid-result"></small></div><div><span>Best nominal fit (x, y)</span><strong id="fit-result">—</strong><small id="fit-gps"></small></div><div><span>Error to known AP</span><strong id="error-result">—</strong><small id="truth-result"></small></div></div>
+          <p id="diagnostic" class="diagnostic" role="status"></p>
+          <p class="plot-note">The shading is a sampled, model-compatible area inside this rectangle. It is not a calibrated probability or 95% confidence region. The reference AP is never an estimator input.</p>
+        </section>
+        <section class="configuration">
+          <details open><summary>RSSI model and calibration</summary><p class="small">RSSI(d) = reference RSSI − 10 n log₁₀(d). Synthetic presets illustrate the model; field values need separate calibration with the same hardware and antenna configuration.</p>
+            <form id="model-form"><div class="three-inputs"><label>Reference at 1 m (dBm)<input id="reference" type="number" min="-120" max="0" step="any" required></label><label>Path-loss exponent n<input id="exponent" type="number" min="0.5" max="6" step="any" required></label><label>Allowed RSSI error (±dB)<input id="tolerance" type="number" min="0.1" max="30" step="any" required></label></div><label class="check-label"><input id="calibrated" type="checkbox">Parameters checked using separate calibration observations</label><div class="button-row"><button class="subtle" type="submit">Apply model</button><span id="calibration-status" class="small"></span></div></form>
+            <details><summary>Fit reference and exponent from known distances</summary><label>One distance (m), RSSI (dBm) pair per line<textarea id="calibration-pairs" rows="4" placeholder="5, -53.4&#10;10, -60&#10;20, -66.6"></textarea></label><button id="fit-calibration" class="subtle">Fit calibration model</button><p class="small">Fit residuals do not include unseen terrain or systematic bias. Choose the allowed error using separate validation data; keep localization stations out of calibration.</p></details>
+          </details>
+          <details><summary>Coordinates, plot bounds and AP reference</summary><form id="geometry-form"><p class="small">x increases east; y increases north. The origin is a convenient southwest reference, not the AP. Local GPS conversion is approximate and limited to a small test site.</p><div class="input-row"><label>Origin latitude<input id="origin-lat" type="number" min="-85" max="85" step="any" required></label><label>Origin longitude<input id="origin-lon" type="number" min="-180" max="180" step="any" required></label></div><div class="input-row"><label>Width (m)<input id="width" type="number" min="10" max="3000" step="any" required></label><label>Height (m)<input id="height" type="number" min="10" max="3000" step="any" required></label></div><label class="check-label"><input id="has-truth" type="checkbox">Known AP position available for evaluation</label><div class="three-inputs"><label>AP east x (m)<input id="truth-x" type="number" step="any"></label><label>AP north y (m)<input id="truth-y" type="number" step="any"></label><label>AP GPS accuracy (m)<input id="truth-accuracy" type="number" min="0" max="500" step="any"></label></div><details><summary>Enter the known AP GPS coordinate</summary><div class="input-row"><label>AP latitude<input id="truth-lat" type="number" min="-85" max="85" step="any"></label><label>AP longitude<input id="truth-lon" type="number" min="-180" max="180" step="any"></label></div><button id="convert-truth-gps" type="button" class="subtle">Convert AP to east / north</button><p class="small">Apply any origin changes first, then convert this independently measured AP position.</p></details><p class="small">Changing the origin reprojects existing stations and the AP reference to preserve their GPS coordinates.</p><button class="subtle" type="submit">Apply plot settings</button></form></details>
+          <details><summary>Import, export and exploratory test criteria</summary><p class="small">Import a saved JSON session or summarized observations in the documented CSV format. CSV import clears the AP reference and calibration flag. Nothing is uploaded.</p><div class="button-row"><label class="file-button">Import CSV / JSON<input id="import-file" type="file" accept=".csv,.json,text/csv,application/json"></label><button id="export-csv">Export CSV</button><button id="export-svg">Export plot</button></div><div class="input-row"><label>Maximum area (m²)<input id="max-area" type="number" min="1" value="600"></label><label>Maximum position error (m)<input id="max-error" type="number" min="0.1" step="any" value="10"></label></div><p class="small">These are editable demonstration thresholds, not agreed project requirements.</p><p id="trial-status" class="diagnostic"></p></details>
+        </section>
+      </div>
+    </div>
+    <section class="method-section"><h2>A repeatable first experiment</h2><ol><li><strong>Calibrate separately.</strong> Measure the selected BSSID at several known distances, using fixed receiver gain, antenna orientation and AP settings.</li><li><strong>Collect at four stations.</strong> Record GPS and its accuracy, timestamp, channel, repeated AP-specific RSSI samples and optional true bearings.</li><li><strong>Estimate without the answer.</strong> Compare the overlap with three stations, then add the fourth. Check whether the region shrinks and contains the reference.</li><li><strong>Repeat and report failures.</strong> Evaluate position error, region area, reference containment and sensitivity to calibration. A missing overlap is a result to investigate.</li></ol><p>The B210 probe reports aggregate dBFS power. It cannot populate AP-specific RSSI in dBm. This demo accepts manual / imported metadata; live Wi-Fi collection is a separate hardware step. <a href="../docs/demo-methodology.md">Read the methodology and CSV format</a>.</p></section>
+  </main>
+  <footer>Local proof of concept · no external map, account or radio connection required</footer>
+  <script type="module" src="app.mjs"></script>
+</body>
+</html>

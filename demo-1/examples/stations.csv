@@ -1,0 +1,5 @@
+station_id,latitude,longitude,gps_accuracy_m,notes
+"P1","-12.046292081556354","-77.04267126015691","2","Simulated GPS position."
+"P2","-12.04571651652357","-77.04266206445385","2","Simulated GPS position."
+"P3","-12.045725509727207","-77.04183445117701","2","Simulated GPS position."
+"P4","-12.046283088352716","-77.0418252554739","2","Simulated GPS position."

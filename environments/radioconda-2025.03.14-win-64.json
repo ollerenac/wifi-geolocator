@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "radioconda_release": "2025.03.14",
+  "target_platform": "win-64",
+  "upstream_lock_url": "https://github.com/radioconda/radioconda-installer/releases/download/2025.03.14/radioconda-win-64.lock",
+  "upstream_lock_sha256": "e28da068f6050dcec66a8b47d98bba3fc67b8121bb173370ad159d781d7c159f",
+  "local_lock_sha256": "23bfa69e9c95f5e70f8303f00c6be0a3889a87bfa67002a42fe394afcdc17995",
+  "normalization": "Removed authentication path segments from public conda channel URLs and normalized line endings to LF; package versions/builds/hash fragments unchanged.",
+  "removed_auth_path_segments": 327,
+  "installer_url": "https://github.com/radioconda/radioconda-installer/releases/download/2025.03.14/radioconda-2025.03.14-Windows-x86_64.exe",
+  "installer_sha256": "d64c316df6f5e76d9f46eaf5e1409aa5fc633e125f5a7d49e8931fa6453b2fee",
+  "windows_decoder_package": {
+    "url": "https://conda.anaconda.org/ryanvolz/win-64/gnuradio-ieee802_11-0.0.0.20250304.dev%2Bg761bdd9-np20py312he13c6b4_2.conda",
+    "md5": "91094223302c7e634c825208e3a1de2e",
+    "sha256": "e0f9a7b5fdccf940257e40d6193bdc76cb362eb6ebb71a37dc9986bd6735065d",
+    "verified_phy_example_path": "Library/share/gnuradio/examples/ieee802_11/wifi_phy_hier.grc"
+  },
+  "baseline_versions": {
+    "python": "3.12.9",
+    "gnuradio": "3.10.12.0",
+    "uhd": "4.8.0.0",
+    "gnuradio-ieee802_11": "0.0.0.20250304.dev+g761bdd9"
+  },
+  "validation": "Windows package layout verified from matching official artifact; live RF on Windows10 not yet tested. Linux generated-IQ and live B210 evidence are separate."
+}

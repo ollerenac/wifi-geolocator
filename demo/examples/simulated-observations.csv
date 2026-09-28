@@ -1,0 +1,5 @@
+id,bssid,ssid,channel,x_m,y_m,latitude,longitude,gps_accuracy_m,rssi_dbm,bearing_deg,bearing_tolerance_deg,timestamp_utc,sample_count,spread_db,enabled,notes
+"M1","02:00:00:00:00:01","Field test AP","6","14","12","-12.046292082","-77.042671260","2","-76.6","57","8","2026-09-28T12:00:00Z","30","1.2","true","Simulated observation; not a hardware measurement."
+"M2","02:00:00:00:00:01","Field test AP","6","15","76","-12.045716517","-77.042662064","2","-77.8","119.3","8","2026-09-28T12:00:00Z","30","1.2","true","Simulated observation; not a hardware measurement."
+"M3","02:00:00:00:00:01","Field test AP","6","105","75","-12.045725510","-77.041834451","2","-74.6","236.3","8","2026-09-28T12:00:00Z","30","1.2","true","Simulated observation; not a hardware measurement."
+"M4","02:00:00:00:00:01","Field test AP","6","106","13","-12.046283088","-77.041825255","2","-76.4","307.4","8","2026-09-28T12:00:00Z","30","1.2","true","Simulated observation; not a hardware measurement."

@@ -1,0 +1,86 @@
+{
+  "version": 1,
+  "source": "synthetic",
+  "target": {
+    "ssid": "Field test AP",
+    "bssid": "02:00:00:00:00:01",
+    "channel": 6
+  },
+  "origin": {
+    "latitude": -12.0464,
+    "longitude": -77.0428
+  },
+  "bounds": {
+    "width": 120,
+    "height": 90
+  },
+  "model": {
+    "referenceDbm": -38,
+    "exponent": 2.2,
+    "toleranceDb": 3,
+    "calibrated": false
+  },
+  "truth": {
+    "x": 64,
+    "y": 46,
+    "accuracyM": 2
+  },
+  "observations": [
+    {
+      "id": "M1",
+      "x": 14,
+      "y": 12,
+      "gpsAccuracyM": 2,
+      "rssiDbm": -76.6,
+      "bearingDeg": 57,
+      "bearingUncertaintyDeg": 8,
+      "enabled": true,
+      "timestamp": "2026-09-28T12:00:00Z",
+      "sampleCount": 30,
+      "spreadDb": 1.2,
+      "notes": "Simulated observation; not a hardware measurement."
+    },
+    {
+      "id": "M2",
+      "x": 15,
+      "y": 76,
+      "gpsAccuracyM": 2,
+      "rssiDbm": -77.8,
+      "bearingDeg": 119.3,
+      "bearingUncertaintyDeg": 8,
+      "enabled": true,
+      "timestamp": "2026-09-28T12:00:00Z",
+      "sampleCount": 30,
+      "spreadDb": 1.2,
+      "notes": "Simulated observation; not a hardware measurement."
+    },
+    {
+      "id": "M3",
+      "x": 105,
+      "y": 75,
+      "gpsAccuracyM": 2,
+      "rssiDbm": -74.6,
+      "bearingDeg": 236.3,
+      "bearingUncertaintyDeg": 8,
+      "enabled": true,
+      "timestamp": "2026-09-28T12:00:00Z",
+      "sampleCount": 30,
+      "spreadDb": 1.2,
+      "notes": "Simulated observation; not a hardware measurement."
+    },
+    {
+      "id": "M4",
+      "x": 106,
+      "y": 13,
+      "gpsAccuracyM": 2,
+      "rssiDbm": -76.4,
+      "bearingDeg": 307.4,
+      "bearingUncertaintyDeg": 8,
+      "enabled": true,
+      "timestamp": "2026-09-28T12:00:00Z",
+      "sampleCount": 30,
+      "spreadDb": 1.2,
+      "notes": "Simulated observation; not a hardware measurement."
+    }
+  ]
+}
