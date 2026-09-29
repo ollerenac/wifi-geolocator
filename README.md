@@ -10,6 +10,14 @@ remain unvalidated, and sample-overflow events require further work.
 
 ## Run the demo
 
+Clone the [private GitHub repository](https://github.com/ollerenac/wifi-geolocator)
+using a GitHub account with access:
+
+```bash
+git clone https://github.com/ollerenac/wifi-geolocator.git
+cd wifi-geolocator
+```
+
 For acquisition on another laptop, start with the
 [Windows 10 installation and first-capture guide](docs/windows-10-setup.md).
 It provides a pinned Radioconda Windows environment, USB setup, software
