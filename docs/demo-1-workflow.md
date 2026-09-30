@@ -255,5 +255,8 @@ No raw IQ, packet payloads, external maps or cloud uploads are part of the app.
 
 The example files under `demo-1/examples/` are **simulated**, including the
 station GPS CSV and capture CSV files. Loading them via field import tests the
-workflow, not radio acquisition. The live collector will use the selected SDR
-decoder path and still awaits implementation and hardware validation.
+workflow, not radio acquisition. The receive-only B210 collector now decodes
+supported beacons and saves AP-specific relative dBFS metadata; its live Linux
+test identified UNI_LIBRE_H by BSSID. Its uncalibrated CSV still cannot enter
+demo-1's dBm-only ranging model, and Windows hardware acquisition remains to
+be validated.

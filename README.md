@@ -10,8 +10,7 @@ remain unvalidated, and sample-overflow events require further work.
 
 ## Run the demo
 
-Clone the [private GitHub repository](https://github.com/ollerenac/wifi-geolocator)
-using a GitHub account with access:
+Clone the [public GitHub repository](https://github.com/ollerenac/wifi-geolocator):
 
 ```bash
 git clone https://github.com/ollerenac/wifi-geolocator.git
@@ -46,6 +45,78 @@ the HTML file directly, because the application uses JavaScript modules.
 - Automatically arrange local coordinates from station positions.
 - Plot feasible APs individually or as a gallery; retain insufficient data reasons.
 - Add independent known AP GPS references and export survey/results/plots.
+
+### Guía rápida: mediciones P1–P4 con el B210
+
+Desde la raíz del proyecto, inicia el servidor con el comando anterior y abre
+`http://127.0.0.1:8765/demo-1/`. La página comienza con datos **simulados**:
+selecciona un AP en la tabla para inspeccionar sus estaciones y el gráfico.
+Pulsa **New field survey** antes de introducir mediciones propias.
+
+En cada posición fija P1, P2, P3 y P4, anota latitud, longitud WGS84 y precisión
+GPS en metros. Ingresa cada estación en el formulario o prepara un CSV con las
+columnas `station_id,latitude,longitude,gps_accuracy_m,notes`. Usa el mismo ID
+en su captura; cambiar de posición requiere un ID nuevo. Conserva también el
+BSSID y canal actuales del AP controlado como referencia independiente.
+
+En esta laptop Linux, ejecuta las capturas en el entorno **Radioconda** con el
+B210 conectado a RF A RX2. Este ejemplo para P1 escucha los canales 149 y 153
+de 5 GHz durante 30 segundos por canal; ajusta la lista a los canales que hayas
+verificado en el lugar:
+
+```bash
+mkdir -p captures
+python3 b210_wifi_collector.py \
+  --serial KUDOS --station P1 \
+  --output captures/P1-run-001.csv --capture-id P1-run-001 \
+  --band 5 --channels 149,153 --seconds-per-channel 30 \
+  --gain 45 --rx-channel 0 --antenna RX2 \
+  --antenna-id telescopic-12to15cm-RFA-RX2
+```
+
+Sin `--ssid` ni `--bssid`, el colector guarda los beacons **decodificados** de
+todos los AP que alcance a oír en esos canales; no escucha todos los canales a
+la vez ni garantiza detectar todos los SSID presentes. Repite el comando en
+P2, P3 y P4, cambiando `--station`, `--output` y `--capture-id` por el ID y un
+nombre de archivo nuevos. Mantén antena, ganancia, altura y orientación tan
+constantes como sea posible. Cada captura crea un CSV y un manifiesto
+`.csv.json`; revisa si hubo beacons y eventos de overflow antes de moverte.
+Para otra banda o para Windows, sigue las guías enlazadas abajo.
+
+Una fila CSV representa un beacon. Contiene `station_id`, `bssid`, `ssid`,
+`frequency_mhz` y `ltf_power_dbfs`. Agrupa por **station_id + BSSID + frecuencia
++ config_id**, no solo por SSID: varios AP pueden compartir nombre y otros lo
+ocultan. Esta orden imprime el número de beacons y la mediana de potencia
+relativa por grupo de capturas `P*-run-*.csv`:
+
+```bash
+python3 - <<'PY'
+import csv
+import statistics
+from collections import defaultdict
+from pathlib import Path
+
+groups = defaultdict(list)
+names = {}
+for path in Path("captures").glob("P*-run-*.csv"):
+    with path.open(newline="") as file:
+        for row in csv.DictReader(file):
+            key = (row["station_id"], row["bssid"], row["frequency_mhz"], row["config_id"])
+            groups[key].append(float(row["ltf_power_dbfs"]))
+            names[key] = row["ssid"] or names.get(key, "(oculto)")
+
+for key, values in sorted(groups.items()):
+    print(*key[:3], names[key], len(values),
+          f"{statistics.median(values):.2f} dBFS", sep=" | ")
+PY
+```
+
+`ltf_power_dbfs` es potencia relativa **por AP**, no RSSI calibrado en dBm.
+Sin una calibración medida y compatible, `rssi_dbm` permanece vacío: **demo-1
+todavía no admite estos CSV del B210 para calcular regiones**. Para practicar el
+gráfico usa la simulación inicial; con mediciones reales en dBm, importa primero
+las estaciones y luego cada captura mediante **Import RSSI capture CSV**.
+Revisa cobertura, calidad y geometría, y guarda la encuesta con **Save survey**.
 
 Read [the demo-1 workflow and file contracts](docs/demo-1-workflow.md).
 The offline `prepare_demo1_survey.py` helper joins GPS exports and existing

@@ -32,8 +32,7 @@ utiliza una sola cadena a 20 MS/s. Emplea recepción nativa de Windows para esta
 primera validación; no se necesita una capa adicional de USB en WSL.
 
 Instala [Git for Windows](https://git-scm.com/download/win). Clona el
-[repositorio privado del proyecto](https://github.com/ollerenac/wifi-geolocator)
-con una cuenta de GitHub que tenga acceso:
+[repositorio público del proyecto](https://github.com/ollerenac/wifi-geolocator):
 
 ```cmd
 git clone https://github.com/ollerenac/wifi-geolocator.git
@@ -41,9 +40,8 @@ cd wifi-geolocator
 git rev-parse HEAD
 ```
 
-Conserva el identificador del commit con los registros de la campaña. Si el
-repositorio es privado, inicia sesión con `ollerenac` o una cuenta autorizada
-cuando Git for Windows solicite autenticación.
+Conserva el identificador del commit con los registros de la campaña. El
+repositorio es público y puedes clonarlo sin iniciar sesión en GitHub.
 No se incluyen contraseñas de AP ni se necesitan para recibir sus beacons.
 
 ## 2. Instalar la distribución fijada
