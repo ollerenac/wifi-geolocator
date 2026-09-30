@@ -58,6 +58,14 @@ GPS en metros. Ingresa cada estación en el formulario o prepara un CSV con las
 columnas `station_id,latitude,longitude,gps_accuracy_m,notes`. Usa el mismo ID
 en su captura; cambiar de posición requiere un ID nuevo. Conserva también el
 BSSID y canal actuales del AP controlado como referencia independiente.
+Por ejemplo, `stations.csv` puede comenzar así (sustituye las coordenadas y
+precisiones de ejemplo por tus mediciones):
+
+```csv
+station_id,latitude,longitude,gps_accuracy_m,notes
+P1,-12.04629,-77.04267,5,Primera posición
+P2,-12.04572,-77.04266,5,Segunda posición
+```
 
 En esta laptop Linux, ejecuta las capturas en el entorno **Radioconda** con el
 B210 conectado a RF A RX2. Este ejemplo para P1 escucha los canales 149 y 153
@@ -82,6 +90,12 @@ nombre de archivo nuevos. Mantén antena, ganancia, altura y orientación tan
 constantes como sea posible. Cada captura crea un CSV y un manifiesto
 `.csv.json`; revisa si hubo beacons y eventos de overflow antes de moverte.
 Para otra banda o para Windows, sigue las guías enlazadas abajo.
+`--station P1` escribe `P1` en la columna `station_id` de cada beacon: **ese ID
+asocia la captura con las coordenadas**, no el nombre `P1-run-001.csv`.
+`--capture-id` distingue las corridas y debe ser nuevo en cada archivo. Con los
+dos canales del ejemplo, 30 segundos por canal son aproximadamente un minuto
+por punto, más el tiempo de arranque y cambio de canal. Para un minuto por
+canal, usa `--seconds-per-channel 60`.
 
 Una fila CSV representa un beacon. Contiene `station_id`, `bssid`, `ssid`,
 `frequency_mhz` y `ltf_power_dbfs`. Agrupa por **station_id + BSSID + frecuencia
@@ -113,10 +127,15 @@ PY
 
 `ltf_power_dbfs` es potencia relativa **por AP**, no RSSI calibrado en dBm.
 Sin una calibración medida y compatible, `rssi_dbm` permanece vacío: **demo-1
-todavía no admite estos CSV del B210 para calcular regiones**. Para practicar el
-gráfico usa la simulación inicial; con mediciones reales en dBm, importa primero
-las estaciones y luego cada captura mediante **Import RSSI capture CSV**.
-Revisa cobertura, calidad y geometría, y guarda la encuesta con **Save survey**.
+rechaza estos CSV del B210 al importarlos** y no muestra sus AP ni calcula
+regiones a partir de ellos. Puedes conservarlos y usar el resumen anterior para
+comparar detección y potencia relativa por punto. Para practicar el gráfico,
+usa la simulación inicial. Con capturas compatibles que sí contienen `rssi_dbm`
+medido en dBm, importa primero las estaciones y después selecciona **cada CSV**
+mediante **Import RSSI capture CSV**. La página no lee automáticamente la carpeta
+`captures/`; el manifiesto `.csv.json` se conserva como registro y no se importa
+en ese botón. Cada CSV de captura debe medir menos de 1 MB. Revisa cobertura,
+calidad y geometría, y guarda la encuesta con **Save survey**.
 
 Read [the demo-1 workflow and file contracts](docs/demo-1-workflow.md).
 The offline `prepare_demo1_survey.py` helper joins GPS exports and existing
